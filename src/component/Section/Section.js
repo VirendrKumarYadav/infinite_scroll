@@ -5,7 +5,6 @@ import Element from './../Element/Element'
 const Section = (props) => {
     
     const loadMoreImages = () => {
-        props.loadMore(2);
         console.log("Loading more images");
     };
     

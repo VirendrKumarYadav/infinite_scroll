@@ -11,29 +11,46 @@ const App = () => {
   const [getApi, setApi] = useState([]);
   const [pageNo, setPageNo] = useState(1);
   const [filerList, setFilerList] = useState(getApi);
+
   // fetch API endpoint
-  const fetchApi = async() => {
-    const apikey = "XipJ1gjLBiWAwhCDh3PvmJWJd_3yWzxGHDZ9m_YUUQE";
+  const fetchApi = async () => {
+    const apikey = "ijJDbmgiE-jfGZrmXxIQLiF589r_jBh32ED0cPD5gEc";
     const url =
-      "https://api.unsplash.com/photos?client_id=" +
+      "https://api.unsplash.com/photos/random/?client_id=" +
       apikey +
-      "&page=" + pageNo;
-    
+      "&count=30";
+
     try {
       const response = await axios.get(url);
-      setApi(response.data);
-      setFilerList(response.data);
+      setApi((oldRes) => [...oldRes, ...response.data]);
+
       localStorage.setItem("img-obj", JSON.stringify(response.data));
     } catch (error) {
-      console.error(error);
-      
+      console.error("I got surprice !! " + error);
     }
   };
   const setFilerListData = (a) => {
-    setFilerList(a)
-}
+    setFilerList(a);
+  };
+
+  //  scroll handle
+  const handleInfiniteWindowScroll = () => {
+    const scrollHeight_Crt =
+      window.innerHeight + document.documentElement.scrollTop;
+    // const scrollTop = document.documentElement.scrollTop;
+    // console.log(scrollHeight_Crt, scrollTop);
+    const totalbodyHight = document.documentElement.offsetHeight
+    if (totalbodyHight - scrollHeight_Crt < 100) {
+      fetchApi()
+    };
+  }
   useEffect(() => {
     fetchApi();
+    window.addEventListener("scroll", handleInfiniteWindowScroll);
+     return () => {
+       window.removeEventListener("scroll", handleInfiniteWindowScroll);
+     };
+    
   }, [pageNo]);
 
   return (
